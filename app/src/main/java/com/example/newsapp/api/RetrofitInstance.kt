@@ -8,8 +8,9 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 
-//creating Singleton of Retrofit to get this instance from anywhere in this project
 class RetrofitInstance {
+
+    //creating Singleton of Retrofit to get this instance from anywhere in this project
     companion object{
         //by lazy is used to initialize when it is accessed
         private val retrofit by lazy {
@@ -25,7 +26,7 @@ class RetrofitInstance {
                 .client(client)
                 .build()
             }
-        //using RetrofitBuilder to create the api
+        //using Retrofit.Builder to create the api
         val api by lazy {
             retrofit.create(NewsApi::class.java)
         }
