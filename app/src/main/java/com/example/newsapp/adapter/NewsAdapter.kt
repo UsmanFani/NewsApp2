@@ -17,10 +17,11 @@ class NewsAdapter : RecyclerView.Adapter<NewsAdapter.ArticleViewHolder>() {
     //using viewBinding to get the view
     inner class ArticleViewHolder(itemView: ArticlePreviewBinding) :
         RecyclerView.ViewHolder(itemView.root) {
-        val imView=itemView.articleIv
-        val tvSource=itemView.sourceTv
-        val tvDescription=itemView.descriptionTv
-        val tvPublishedAt=itemView.publishedAtTv
+        val imView = itemView.articleIv
+        val tvSource = itemView.sourceTv
+        val tvTitle = itemView.titleTv
+        val tvDescription = itemView.descriptionTv
+        val tvPublishedAt = itemView.publishedAtTv
     }
 
     override fun onCreateViewHolder(
@@ -36,12 +37,14 @@ class NewsAdapter : RecyclerView.Adapter<NewsAdapter.ArticleViewHolder>() {
         val article = differ.currentList[position]
         holder.itemView.apply {
             Glide.with(this).load(article.urlToImage).into(holder.imView)
-            holder.tvDescription.text=article.description
-            holder.tvSource.text=article.source.name
-            holder.tvPublishedAt.text=article.publishedAt
+            holder.tvDescription.text = article.description
+            holder.tvTitle.text = article.title
+            holder.tvSource.text = article.source.name
+            holder.tvPublishedAt.text = article.publishedAt
             setOnClickListener {
                 onItemClickListner?.let {
-                    it(article) }
+                    it(article)
+                }
             }
 
         }
@@ -51,7 +54,7 @@ class NewsAdapter : RecyclerView.Adapter<NewsAdapter.ArticleViewHolder>() {
         return differ.currentList.size
     }
 
-    //Using DiffUtil to compare two list of items
+    //Using DiffUtil to compare two items
     //Basically using for compare the item so same items don't attach again
     //in adapter
     private val differCallBack = object : DiffUtil.ItemCallback<Article>() {
@@ -67,11 +70,11 @@ class NewsAdapter : RecyclerView.Adapter<NewsAdapter.ArticleViewHolder>() {
 
     //AsyncListDiffer used to differentiate the list in background thread
     //and get position of item in adapter
-    private val differ = AsyncListDiffer(this, differCallBack)
+    val differ = AsyncListDiffer(this, differCallBack)
 
-    private var onItemClickListner:((Article)-> Unit)?=null
+    private var onItemClickListner: ((Article) -> Unit)? = null
 
-    fun setOnItemClickListner(listner:(Article)->Unit){
-        onItemClickListner=listner
+    fun setOnItemClickListner(listner: (Article) -> Unit) {
+        onItemClickListner = listner
     }
 }
