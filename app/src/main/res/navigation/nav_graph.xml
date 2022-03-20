@@ -51,5 +51,9 @@
         app:exitAnim="@anim/from_on_to_left"
         app:popEnterAnim="@anim/from_left_to_on"
         app:popExitAnim="@anim/from_on_to_right"
-        tools:layout="@layout/fragment_article" />
+        tools:layout="@layout/fragment_article" >
+        <argument
+            android:name="articleArgs"
+            app:argType="com.example.newsapp.model.Article" />
+    </fragment>
 </navigation>

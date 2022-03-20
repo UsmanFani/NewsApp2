@@ -16,19 +16,19 @@ interface NewsApi {
         @Query("country")  //running Query
         countryCode: String = "in",
         @Query("page")
-        pageNumber:Int=1,
+        pageNumber: Int = 1,
         @Query("apiKey")
-        apiKey:String=API_KEY
-        ):Response<NewsResponse> //returning Response of type NewsResponse Data Class. Response<T(Generic Type)>
+        apiKey: String = API_KEY
+    ): Response<NewsResponse> //returning Response of type NewsResponse Data Class. Response<T(Generic Type)>
 
 
     @GET("/v2/everything")
     suspend fun getSearchNews(
         @Query("q")
-        searchQuery:String,
+        searchQuery: String,
         @Query("page")
-        pageNumber:Int=1,
+        pageNumber: Int = 1,
         @Query("apiKey")
-        apiKey: String= API_KEY
-    ):Response<NewsResponse>
+        apiKey: String = API_KEY
+    ): Response<NewsResponse>
 }

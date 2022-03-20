@@ -9,14 +9,14 @@ class Converter {
     //use in Article data class because in Table only primitive data(string,int, etc..)
     //type can be saved
     @TypeConverter
-    fun fromSource(source: Source):String{
+    fun fromSource(source: Source): String {
         return source.name
     }
 
     //converting back to Source data class
     @TypeConverter
-    fun toSource(name:String):Source{
-        return Source(name,name)
+    fun toSource(name: String): Source {
+        return Source(name, name)
     }
 
 }

@@ -6,10 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Adapter
+import androidx.core.os.bundleOf
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.newsapp.R
 import com.example.newsapp.adapter.NewsAdapter
@@ -30,7 +32,7 @@ class SearchNewsFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentSearchNewsBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -46,7 +48,7 @@ class SearchNewsFragment : Fragment() {
         binding.searchEt.addTextChangedListener { editable ->
             job?.cancel()
             job = MainScope().launch {
-                delay(500L)
+                delay(1000L)
                 if (editable.toString().isNotEmpty()) {
                     viewModel.getSearchNews(editable.toString())
                 }
@@ -71,9 +73,14 @@ class SearchNewsFragment : Fragment() {
 
         })
 
+        newsAdapter.setOnItemClickListner {
+           val action=SearchNewsFragmentDirections.actionSearchNewsFragmentToArticleFragment(it)
+            findNavController().navigate(action)
+        }
+
     }
 
-    fun setupRecycler() {
+    private fun setupRecycler() {
         newsAdapter = NewsAdapter()
         binding.searchRv.adapter = newsAdapter
         binding.searchRv.layoutManager = LinearLayoutManager(activity)

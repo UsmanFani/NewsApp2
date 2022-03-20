@@ -11,12 +11,12 @@ import retrofit2.converter.gson.GsonConverterFactory
 class RetrofitInstance {
 
     //creating Singleton of Retrofit to get this instance from anywhere in this project
-    companion object{
+    companion object {
         //by lazy is used to initialize when it is accessed
         private val retrofit by lazy {
-            val logging=HttpLoggingInterceptor() //to log Http Request and Response
+            val logging = HttpLoggingInterceptor() //to log Http Request and Response
             logging.setLevel(HttpLoggingInterceptor.Level.BODY)
-            val client=OkHttpClient.Builder()
+            val client = OkHttpClient.Builder()
                 .addInterceptor(logging)
                 .build()
             //using RetrofitBuilder to create the api
@@ -25,7 +25,8 @@ class RetrofitInstance {
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(client)
                 .build()
-            }
+        }
+
         //using Retrofit.Builder to create the api
         val api by lazy {
             retrofit.create(NewsApi::class.java)

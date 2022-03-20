@@ -1,8 +1,10 @@
 package com.example.newsapp.adapter
 
+import android.graphics.Typeface
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.NavArgs
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -14,13 +16,14 @@ import com.example.newsapp.model.Article
 
 class NewsAdapter : RecyclerView.Adapter<NewsAdapter.ArticleViewHolder>() {
 
+
     //using viewBinding to get the view
     inner class ArticleViewHolder(itemView: ArticlePreviewBinding) :
         RecyclerView.ViewHolder(itemView.root) {
         val imView = itemView.articleIv
         val tvSource = itemView.sourceTv
         val tvTitle = itemView.titleTv
-        val tvDescription = itemView.descriptionTv
+       // val tvDescription = itemView.descriptionTv
         val tvPublishedAt = itemView.publishedAtTv
     }
 
@@ -37,9 +40,10 @@ class NewsAdapter : RecyclerView.Adapter<NewsAdapter.ArticleViewHolder>() {
         val article = differ.currentList[position]
         holder.itemView.apply {
             Glide.with(this).load(article.urlToImage).into(holder.imView)
-            holder.tvDescription.text = article.description
+           // holder.tvDescription.text = article.description
             holder.tvTitle.text = article.title
-            holder.tvSource.text = article.source.name
+            holder.tvSource.text = article.source?.name
+            holder.tvSource.typeface= Typeface.SERIF
             holder.tvPublishedAt.text = article.publishedAt
             setOnClickListener {
                 onItemClickListner?.let {
