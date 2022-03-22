@@ -5,17 +5,15 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Adapter
-import androidx.core.os.bundleOf
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import com.example.newsapp.databinding.FragmentSearchNewsBinding
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.newsapp.R
 import com.example.newsapp.adapter.NewsAdapter
-import com.example.newsapp.databinding.FragmentSearchNewsBinding
 import com.example.newsapp.util.Resource
 import com.example.newsapp.viewmodels.NewsViewModel
 import kotlinx.coroutines.Job
@@ -74,7 +72,7 @@ class SearchNewsFragment : Fragment() {
         })
 
         newsAdapter.setOnItemClickListner {
-           val action=SearchNewsFragmentDirections.actionSearchNewsFragmentToArticleFragment(it)
+            val action = SearchNewsFragmentDirections.actionSearchNewsFragmentToArticleFragment(it)
             findNavController().navigate(action)
         }
 
@@ -84,5 +82,15 @@ class SearchNewsFragment : Fragment() {
         newsAdapter = NewsAdapter()
         binding.searchRv.adapter = newsAdapter
         binding.searchRv.layoutManager = LinearLayoutManager(activity)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        (requireActivity() as AppCompatActivity).supportActionBar?.hide()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        (requireActivity() as AppCompatActivity).supportActionBar?.show()
     }
 }

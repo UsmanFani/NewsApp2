@@ -1,5 +1,6 @@
 package com.example.newsapp.ui
 
+import android.app.ActionBar
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -31,5 +32,6 @@ class MainActivity : AppCompatActivity() {
         binding.bottomNavView.setupWithNavController(navHostFragment.navController)
 
     }
+
 
 }

@@ -2,9 +2,10 @@ package com.example.newsapp.Repository
 
 import com.example.newsapp.api.RetrofitInstance
 import com.example.newsapp.db.ArticleDatabase
+import com.example.newsapp.model.Article
 
 //repository class is used to get the data from Local/Remote
-class NewsRepository(database: ArticleDatabase) {
+class NewsRepository(val database: ArticleDatabase) {
 
 
     suspend fun getHeadlineNews(countryCode: String, pageNo: Int) =
@@ -13,4 +14,12 @@ class NewsRepository(database: ArticleDatabase) {
     suspend fun getSearchNews(searchText: String, pageNo: Int) =
         RetrofitInstance.api.getSearchNews(searchText, pageNo)
 
+    suspend fun insert(article:Article)=
+        database.getArticleDao().articleInsert(article)
+
+    fun getSavedArticles()=
+        database.getArticleDao().getAllArticles()
+
+    suspend fun delete(article: Article)=
+        database.getArticleDao().deleteArticle(article)
 }

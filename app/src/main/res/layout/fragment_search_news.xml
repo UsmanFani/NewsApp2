@@ -5,17 +5,25 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <EditText
-        android:gravity="center_vertical"
-        android:drawableEnd="@drawable/ic_baseline_clear_24"
-        android:id="@+id/search_et"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/search_ti"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:drawableStart="@drawable/ic_baseline_search_24"
+        app:startIconDrawable="@drawable/ic_baseline_search_24"
+        app:endIconMode="clear_text"
         android:hint="Search News"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/search_et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+    </com.google.android.material.textfield.TextInputLayout>
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/search_rv"
@@ -23,7 +31,7 @@
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@id/search_et"
-        app:layout_constraintTop_toBottomOf="@+id/search_et"
+        app:layout_constraintStart_toStartOf="@id/search_ti"
+        app:layout_constraintTop_toBottomOf="@+id/search_ti"
         tools:listitem="@layout/article_preview" />
 </androidx.constraintlayout.widget.ConstraintLayout>
