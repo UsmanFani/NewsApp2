@@ -1,5 +1,6 @@
 package com.example.newsapp.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,7 +9,9 @@ import com.example.newsapp.model.Article
 import com.example.newsapp.model.NewsResponse
 import com.example.newsapp.util.Resource
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 import retrofit2.Response
+import java.sql.SQLException
 
 
 class NewsViewModel(private val newsRepository: NewsRepository) : ViewModel() {
@@ -26,17 +29,25 @@ class NewsViewModel(private val newsRepository: NewsRepository) : ViewModel() {
     fun getHeadlines(countryCode: String) {
         viewModelScope.launch {
             headlinesLiveData.postValue(Resource.Loading())
-            //getting retrofit response through repository
-            val response = newsRepository.getHeadlineNews(countryCode, headlinePage)
-            headlinesLiveData.postValue(handleHeadlinesResponse(response))
+            try {
+                //getting retrofit response through repository
+                val response = newsRepository.getHeadlineNews(countryCode, headlinePage)
+                //headlinesLiveData.postValue(handleHeadlinesResponse(response))
+            }catch (e:HttpException){
+                Log.e("e_headline", "httpException: $e")
+            }
         }
     }
 
     fun getSearchNews(searchNews: String) {
         viewModelScope.launch {
             searchNewsLiveData.postValue(Resource.Loading())
-            val response = newsRepository.getSearchNews(searchNews, headlinePage)
-            searchNewsLiveData.postValue(searchHeadLineResponse(response))
+            try {
+                val response = newsRepository.getSearchNews(searchNews, headlinePage)
+              //  searchNewsLiveData.postValue(searchHeadLineResponse(response))
+            }catch (e:HttpException){
+                Log.e("e_news", "getSearchNews: $e", )
+            }
         }
     }
 
@@ -63,15 +74,28 @@ class NewsViewModel(private val newsRepository: NewsRepository) : ViewModel() {
 
     fun saveNews(article: Article) {
         viewModelScope.launch {
-            newsRepository.insert(article)
+            try {
+                newsRepository.insert(article)
+            }catch (e:SQLException){
+                Log.e("e_sql", "saveNews: $e" )
+            }
         }
     }
 
     fun deleteSavedNews(article: Article){
         viewModelScope.launch {
-            newsRepository.delete(article)
+            try {
+                newsRepository.delete(article)
+            }catch (e:SQLException){
+                Log.e("e_sql", "deleteSavedNews: $e", )
+            }
         }
     }
 
-    fun getSavedArticles()=newsRepository.getSavedArticles()
+    fun getSavedArticles()=
+        try {
+            newsRepository.getSavedArticles()
+        }catch (e:SQLException){
+            Log.e("e_sql", "getSavedArticles: $e", )
+        }
 }

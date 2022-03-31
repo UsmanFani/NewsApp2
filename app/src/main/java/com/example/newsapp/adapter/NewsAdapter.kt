@@ -2,6 +2,7 @@ package com.example.newsapp.adapter
 
 import android.graphics.Typeface
 import android.view.LayoutInflater
+import android.view.RoundedCorner
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.NavArgs
@@ -39,7 +40,11 @@ class NewsAdapter : RecyclerView.Adapter<NewsAdapter.ArticleViewHolder>() {
     override fun onBindViewHolder(holder: NewsAdapter.ArticleViewHolder, position: Int) {
         val article = differ.currentList[position]
         holder.itemView.apply {
-            Glide.with(this).load(article.urlToImage).into(holder.imView)
+            Glide.with(this)
+                .load(article.urlToImage)
+                .fitCenter().centerCrop()
+                .placeholder(R.drawable.ic_baseline_broken_image_24)
+                .into(holder.imView)
            // holder.tvDescription.text = article.description
             holder.tvTitle.text = article.title
             holder.tvSource.text = article.source?.name

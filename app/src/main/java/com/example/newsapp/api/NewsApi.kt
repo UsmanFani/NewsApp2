@@ -19,7 +19,7 @@ interface NewsApi {
         pageNumber: Int = 1,
         @Query("apiKey")
         apiKey: String = API_KEY
-    ): Response<NewsResponse> //returning Response of type NewsResponse Data Class. Response<T(Generic Type)>
+    ): NewsResponse //returning Response of type NewsResponse Data Class. Response<T(Generic Type)>
 
 
     @GET("/v2/everything")
@@ -30,5 +30,5 @@ interface NewsApi {
         pageNumber: Int = 1,
         @Query("apiKey")
         apiKey: String = API_KEY
-    ): Response<NewsResponse>
+    ): NewsResponse
 }
