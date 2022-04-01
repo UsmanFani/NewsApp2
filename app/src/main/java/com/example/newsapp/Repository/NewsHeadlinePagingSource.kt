@@ -2,17 +2,18 @@ package com.example.newsapp.Repository
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.example.newsapp.api.NewsApi
+import com.example.newsapp.Network.NewsApiService
 import com.example.newsapp.model.Article
 import retrofit2.HttpException
 import java.io.IOException
+import java.net.UnknownHostException
 
-class NewsHeadlinePagingSource (private val newsApi: NewsApi): PagingSource<Int, Article>() {
+class NewsHeadlinePagingSource (private val newsApiService: NewsApiService): PagingSource<Int, Article>() {
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Article>{
         return try {
             val nextPage=params.key ?: 1
-            val response=newsApi.getHeadlines(pageNumber = nextPage)
+            val response=newsApiService.getHeadlines(pageNumber = nextPage)
             val items=response.articles
             val nextKey = if (items.isEmpty()){
                 null
@@ -27,6 +28,8 @@ class NewsHeadlinePagingSource (private val newsApi: NewsApi): PagingSource<Int,
         }catch (e:IOException){
             LoadResult.Error(e)
         }catch (e:HttpException){
+            LoadResult.Error(e)
+        }catch (e:UnknownHostException){
             LoadResult.Error(e)
         }
     }

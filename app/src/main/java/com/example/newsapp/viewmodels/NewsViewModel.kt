@@ -3,6 +3,7 @@ package com.example.newsapp.viewmodels
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asFlow
 import androidx.lifecycle.viewModelScope
 import com.example.newsapp.Repository.NewsRepository
 import com.example.newsapp.model.Article
@@ -92,10 +93,5 @@ class NewsViewModel(private val newsRepository: NewsRepository) : ViewModel() {
         }
     }
 
-    fun getSavedArticles()=
-        try {
-            newsRepository.getSavedArticles()
-        }catch (e:SQLException){
-            Log.e("e_sql", "getSavedArticles: $e", )
-        }
+    fun getSavedArticles()=newsRepository.getSavedArticles().asFlow()
 }

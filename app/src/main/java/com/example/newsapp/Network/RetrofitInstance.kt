@@ -1,7 +1,6 @@
-package com.example.newsapp.api
+package com.example.newsapp.Network
 
 import com.example.newsapp.util.Constants.Companion.BASE_URL
-import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -29,7 +28,7 @@ class RetrofitInstance {
 
         //using Retrofit.Builder to create the api
         val api by lazy {
-            retrofit.create(NewsApi::class.java)
+            retrofit.create(NewsApiService::class.java)
         }
     }
 }

@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.newsapp.R
@@ -31,6 +32,13 @@ class NewsPagingAdapter : PagingDataAdapter<Article, NewsPagingAdapter.ArticleVi
     override fun onBindViewHolder(holder: ArticleViewHolder, position: Int) {
         val item=getItem(position)
         if(item != null) holder.bind(item)
+        holder.itemView.setOnClickListener {
+            onItemClickListner?.let {
+                if (item != null) {
+                    it(item)
+                }
+            }
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ArticleViewHolder {
@@ -48,6 +56,13 @@ class NewsPagingAdapter : PagingDataAdapter<Article, NewsPagingAdapter.ArticleVi
             return oldItem == newItem
         }
 
+    }
+
+
+    private var onItemClickListner: ((Article)->Unit)? = null
+
+    fun setOnItemClickListner(listner:(Article)->Unit){
+        onItemClickListner = listner
     }
 
 }

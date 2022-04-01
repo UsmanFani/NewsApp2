@@ -1,6 +1,6 @@
 package com.example.newsapp.Repository
 
-import com.example.newsapp.api.RetrofitInstance
+import com.example.newsapp.Network.RetrofitInstance
 import com.example.newsapp.db.ArticleDatabase
 import com.example.newsapp.model.Article
 

@@ -7,15 +7,20 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.newsapp.adapter.NewsAdapter
 import com.example.newsapp.databinding.FragmentSavedNewsBinding
+import com.example.newsapp.model.Article
 import com.example.newsapp.viewmodels.NewsViewModel
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 class SaveNewsFragment:Fragment() {
     var _binding: FragmentSavedNewsBinding? =null
@@ -38,6 +43,12 @@ class SaveNewsFragment:Fragment() {
 //        viewModel.getSavedArticles().observe(viewLifecycleOwner, Observer {article->
 //            newsAdapter.differ.submitList(article)
 //        })
+
+        lifecycleScope.launch {
+            viewModel.getSavedArticles().collectLatest {
+                newsAdapter.differ.submitList(it)
+            }
+        }
 
         //callback for swipe to delete article and passing it to ItemTouchHelper
         val itemTouchHelper=object :ItemTouchHelper.SimpleCallback(
@@ -74,7 +85,9 @@ class SaveNewsFragment:Fragment() {
 
     fun setupRecyclerView(){
         newsAdapter= NewsAdapter()
-        binding.saveRv.adapter=newsAdapter
-        binding.saveRv.layoutManager=LinearLayoutManager(activity)
+        binding.apply {
+            saveRv.adapter = newsAdapter
+            saveRv.layoutManager = LinearLayoutManager(activity)
+        }
     }
 }
