@@ -12,17 +12,17 @@ class NewsHeadlinePagingSource (private val newsApiService: NewsApiService): Pag
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Article>{
         return try {
-            val nextPage=params.key ?: 1
-            val response=newsApiService.getHeadlines(pageNumber = nextPage)
+            val currentPage=params.key ?: 1
+            val response=newsApiService.getHeadlines(pageNumber = currentPage)
             val items=response.articles
             val nextKey = if (items.isEmpty()){
                 null
             }else{
-                nextPage.plus(1)
+                currentPage.plus(1)
             }
             LoadResult.Page(
                 data = items,
-                prevKey = if(nextPage == 1) null else nextPage.minus(1),
+                prevKey = if(currentPage == 1) null else currentPage.minus(1),
                 nextKey
             )
         }catch (e:IOException){

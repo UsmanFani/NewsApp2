@@ -1,29 +1,23 @@
 package com.example.newsapp.ui.fragment
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.example.newsapp.databinding.FragmentSearchNewsBinding
 import androidx.navigation.fragment.findNavController
+import androidx.paging.LoadState
+import androidx.paging.PagingData
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.newsapp.adapter.NewsAdapter
 import com.example.newsapp.adapter.NewsPagingAdapter
-import com.example.newsapp.util.Resource
-import com.example.newsapp.viewmodels.NewsPagingViewModel
+import com.example.newsapp.model.Article
 import com.example.newsapp.viewmodels.NewsViewModel
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -33,6 +27,7 @@ class SearchNewsFragment : Fragment() {
     lateinit var newsAdapter: NewsPagingAdapter
     var _binding: FragmentSearchNewsBinding? = null
     val binding get() = _binding!!
+    val viewModel: NewsViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -44,23 +39,33 @@ class SearchNewsFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-       // val viewModel: NewsViewModel by activityViewModels()
-        val viewModel: NewsPagingViewModel by activityViewModels()
         setupRecycler()
+        super.onViewCreated(view, savedInstanceState)
+
+
+        if(viewModel.flag){
+            lifecycleScope.launch {
+                viewModel.getSearchArticles(viewModel.currentChar.toString()).collect {
+                    newsAdapter.submitData(it)
+                }
+            }
+        }
 
         binding.searchEt.setOnEditorActionListener { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 lifecycleScope.launch {
-                    viewModel.getSearchArticles(v.text.toString()).collectLatest {
+                    viewModel.getSearchArticles(v.text.toString()).collect {
                         newsAdapter.submitData(it)
                     }
                 }
+
                 return@setOnEditorActionListener true
             }
             return@setOnEditorActionListener false
 
         }
+
+
         //to do background job
         //runs inside coroutines scope
     /*    var job: Job? = null
@@ -101,6 +106,8 @@ class SearchNewsFragment : Fragment() {
             findNavController().navigate(action)
         }
 
+
+
     }
 
     private fun setupRecycler() {
@@ -119,5 +126,10 @@ class SearchNewsFragment : Fragment() {
     override fun onStop() {
         super.onStop()
         (requireActivity() as AppCompatActivity).supportActionBar?.show()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
     }
 }

@@ -5,10 +5,22 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asFlow
 import androidx.lifecycle.viewModelScope
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import com.example.newsapp.Network.RetrofitInstance
+import com.example.newsapp.Repository.NewsHeadlinePagingSource
 import com.example.newsapp.Repository.NewsRepository
+import com.example.newsapp.Repository.NewsSearchPagingSource
+import com.example.newsapp.db.ArticleDatabase
 import com.example.newsapp.model.Article
 import com.example.newsapp.model.NewsResponse
 import com.example.newsapp.util.Resource
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import retrofit2.Response
@@ -17,15 +29,19 @@ import java.sql.SQLException
 
 class NewsViewModel(private val newsRepository: NewsRepository) : ViewModel() {
 
+    private var currentAllArticles: Flow<PagingData<Article>>? = null
+    private var currentSearchArticles: Flow<PagingData<Article>>? = null
+    private var currentSearchChar: String? = null
+    val currentChar get() = currentSearchChar
+    private var _flag:Boolean = false
+    val flag get() = _flag
+
 
     //mutable data holding and observing
     val headlinesLiveData: MutableLiveData<Resource<NewsResponse>> = MutableLiveData()
     val searchNewsLiveData: MutableLiveData<Resource<NewsResponse>> = MutableLiveData()
     var headlinePage: Int = 1
 
-    init {
-        getHeadlines("in")
-    }
 
     fun getHeadlines(countryCode: String) {
         viewModelScope.launch {
@@ -34,7 +50,7 @@ class NewsViewModel(private val newsRepository: NewsRepository) : ViewModel() {
                 //getting retrofit response through repository
                 val response = newsRepository.getHeadlineNews(countryCode, headlinePage)
                 //headlinesLiveData.postValue(handleHeadlinesResponse(response))
-            }catch (e:HttpException){
+            } catch (e: HttpException) {
                 Log.e("e_headline", "httpException: $e")
             }
         }
@@ -45,9 +61,9 @@ class NewsViewModel(private val newsRepository: NewsRepository) : ViewModel() {
             searchNewsLiveData.postValue(Resource.Loading())
             try {
                 val response = newsRepository.getSearchNews(searchNews, headlinePage)
-              //  searchNewsLiveData.postValue(searchHeadLineResponse(response))
-            }catch (e:HttpException){
-                Log.e("e_news", "getSearchNews: $e", )
+                // searchNewsLiveData.postValue(searchHeadLineResponse(response))
+            } catch (e: HttpException) {
+                Log.e("e_news", "getSearchNews: $e")
             }
         }
     }
@@ -77,21 +93,41 @@ class NewsViewModel(private val newsRepository: NewsRepository) : ViewModel() {
         viewModelScope.launch {
             try {
                 newsRepository.insert(article)
-            }catch (e:SQLException){
-                Log.e("e_sql", "saveNews: $e" )
+            } catch (e: SQLException) {
+                Log.e("e_sql", "saveNews: $e")
             }
         }
     }
 
-    fun deleteSavedNews(article: Article){
+    fun deleteSavedNews(article: Article) {
         viewModelScope.launch {
             try {
                 newsRepository.delete(article)
-            }catch (e:SQLException){
-                Log.e("e_sql", "deleteSavedNews: $e", )
+            } catch (e: SQLException) {
+                Log.e("e_sql", "deleteSavedNews: $e")
             }
         }
     }
 
-    fun getSavedArticles()=newsRepository.getSavedArticles().asFlow()
+    fun getSavedArticles() = newsRepository.getSavedArticles()
+
+    fun getAllArticles(): Flow<PagingData<Article>> {
+        val lastArticles = currentAllArticles
+        if (lastArticles != null) return lastArticles
+        val newResult = newsRepository.getAllArticles()
+            .cachedIn(viewModelScope)
+        currentAllArticles = newResult
+        return newResult
+    }
+
+    fun getSearchArticles(query: String): Flow<PagingData<Article>> {
+        val lastSearchArticles = currentSearchArticles
+        _flag = true
+        if (currentSearchChar == query && lastSearchArticles != null) return lastSearchArticles
+        currentSearchChar = query
+        val newSearchResult = newsRepository.getSearchArticles(query)
+            .cachedIn(viewModelScope)
+        currentSearchArticles = newSearchResult
+        return newSearchResult
+    }
 }

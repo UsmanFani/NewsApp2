@@ -5,22 +5,20 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
+import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.newsapp.adapter.NewsAdapter
+import com.example.newsapp.R
+import com.example.newsapp.adapter.NewsLoadStateAdapter
 import com.example.newsapp.adapter.NewsPagingAdapter
 import com.example.newsapp.databinding.FragmentBreakingNewsBinding
-import com.example.newsapp.util.Resource
-import com.example.newsapp.viewmodels.NewsPagingViewModel
+import com.example.newsapp.databinding.LoadStateItemBinding
 import com.example.newsapp.viewmodels.NewsViewModel
-import kotlinx.coroutines.flow.collect
+import com.google.android.material.progressindicator.CircularProgressIndicator
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.net.UnknownHostException
@@ -44,7 +42,7 @@ class BreakingNewsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 //        val viewModel: NewsViewModel by activityViewModels()
-        val viewModel: NewsPagingViewModel by activityViewModels()
+        val viewModel: NewsViewModel by activityViewModels()
         setupRecycleView()
 
 
@@ -77,10 +75,15 @@ class BreakingNewsFragment : Fragment() {
 
         lifecycleScope.launch {
             viewModel.getAllArticles().collectLatest {
-                try {
-                    newsAdapter.submitData(it)
-                } catch (e: UnknownHostException) {
-                    Log.e("bnFragError", "onViewCreated: ", e)
+                newsAdapter.submitData(it)
+            }
+
+            newsAdapter.loadStateFlow.collectLatest {
+                when (it.refresh) {
+                    is LoadState.Loading -> {
+                        view.findViewById<ProgressBar>(R.id.progress_circular).visibility =
+                            View.VISIBLE
+                    }
                 }
             }
         }
@@ -90,12 +93,22 @@ class BreakingNewsFragment : Fragment() {
     fun setupRecycleView() {
         // newsAdapter = NewsAdapter()
         newsAdapter = NewsPagingAdapter()
+        newsAdapter.withLoadStateHeaderAndFooter(
+            header = NewsLoadStateAdapter(newsAdapter::retry),
+            footer = NewsLoadStateAdapter(newsAdapter::retry)
+        )
         binding.headlineRv.apply {
             adapter = newsAdapter
             layoutManager = LinearLayoutManager(activity)
         }
 
 
+
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
     }
 
 }

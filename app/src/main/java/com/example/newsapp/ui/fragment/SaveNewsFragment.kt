@@ -40,15 +40,15 @@ class SaveNewsFragment:Fragment() {
         val viewModel:NewsViewModel by activityViewModels()
         setupRecyclerView()
 
-//        viewModel.getSavedArticles().observe(viewLifecycleOwner, Observer {article->
-//            newsAdapter.differ.submitList(article)
-//        })
+        viewModel.getSavedArticles().observe(viewLifecycleOwner, Observer {article->
+            newsAdapter.differ.submitList(article)
+        })
 
-        lifecycleScope.launch {
-            viewModel.getSavedArticles().collectLatest {
-                newsAdapter.differ.submitList(it)
-            }
-        }
+//        lifecycleScope.launch {
+//            viewModel.getSavedArticles().collectLatest {
+//                newsAdapter.differ.submitList(it)
+//            }
+//        }
 
         //callback for swipe to delete article and passing it to ItemTouchHelper
         val itemTouchHelper=object :ItemTouchHelper.SimpleCallback(
@@ -62,6 +62,7 @@ class SaveNewsFragment:Fragment() {
             ): Boolean {
                 return true
             }
+
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position=viewHolder.absoluteAdapterPosition
@@ -89,5 +90,10 @@ class SaveNewsFragment:Fragment() {
             saveRv.adapter = newsAdapter
             saveRv.layoutManager = LinearLayoutManager(activity)
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
     }
 }
