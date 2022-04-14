@@ -9,22 +9,22 @@ import androidx.paging.LoadStateAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.newsapp.databinding.LoadStateItemBinding
 
-class NewsLoadStateAdapter(private val retry:()->Unit): LoadStateAdapter<NewsLoadStateAdapter.NewsLoadStateViewHolder>() {
+class NewsLoadStateAdapter(private val retry: () -> Unit): LoadStateAdapter<NewsLoadStateAdapter.NewsLoadStateViewHolder>() {
 
-    class NewsLoadStateViewHolder(private val binding: LoadStateItemBinding,retry: () -> Unit ):RecyclerView.ViewHolder(binding.root){
+    class NewsLoadStateViewHolder(private val binding: LoadStateItemBinding,private val retry: () -> Unit ):RecyclerView.ViewHolder(binding.root){
 
-        private val retryBtn:Button = binding.retryBtn.also {
-            retry()
+        init {
+            binding.retryBtn.setOnClickListener { retry.invoke() }
         }
+
         fun bind(loadState: LoadState){
             binding.apply {
+                progressCircular.isVisible = loadState is LoadState.Loading
+                retryBtn.isVisible = loadState !is LoadState.Loading
+                errorTv.isVisible = loadState !is LoadState.Loading
                 if(loadState is LoadState.Error){
                     errorTv.text = loadState.error.localizedMessage
                 }
-                progressCircular.isVisible = loadState is LoadState.Loading
-                retryBtn.isVisible = loadState is LoadState.Error
-                errorTv.isVisible = loadState is LoadState.Error
-
             }
 
         }
@@ -36,7 +36,9 @@ class NewsLoadStateAdapter(private val retry:()->Unit): LoadStateAdapter<NewsLoa
 
     override fun onCreateViewHolder(parent: ViewGroup, loadState: LoadState): NewsLoadStateViewHolder {
         return NewsLoadStateViewHolder(LoadStateItemBinding.inflate(LayoutInflater
-            .from(parent.context),parent,false),retry)
+            .from(parent.context),parent,false)){
+            retry()
+        }
     }
 
 }

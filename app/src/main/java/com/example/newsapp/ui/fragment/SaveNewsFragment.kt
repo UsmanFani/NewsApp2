@@ -71,6 +71,7 @@ class SaveNewsFragment:Fragment() {
                 Snackbar.make(binding.root,"Article Deleted",Snackbar.LENGTH_SHORT)
                     .setAction("Undo"){
                         viewModel.saveNews(article)
+                        binding.saveRv.scrollToPosition(position)
                 }.show()
             }
 

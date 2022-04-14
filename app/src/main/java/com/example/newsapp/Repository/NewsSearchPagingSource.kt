@@ -30,6 +30,9 @@ class NewsSearchPagingSource(val newsApiService: NewsApiService, val query:Strin
     }
 
     override fun getRefreshKey(state: PagingState<Int, Article>): Int? {
-        TODO("Not yet implemented")
+        return state.anchorPosition?.let {
+            val anchorPage = state.closestPageToPosition(it)
+            anchorPage?.prevKey?.plus(1) ?: anchorPage?.nextKey?.minus(1)
+        }
     }
 }

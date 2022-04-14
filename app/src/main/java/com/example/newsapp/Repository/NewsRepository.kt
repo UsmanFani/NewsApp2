@@ -25,18 +25,19 @@ class NewsRepository(val database: ArticleDatabase) {
     fun getSavedArticles() =
         database.getArticleDao().getAllArticles()
 
+
     suspend fun delete(article: Article) =
         database.getArticleDao().deleteArticle(article)
 
     fun getSearchArticles(query: String): Flow<PagingData<Article>> = Pager(
-        config = PagingConfig(20)
+        config = PagingConfig(10)
     ) {
         NewsSearchPagingSource(RetrofitInstance.api, query)
     }.flow
 
-    fun getAllArticles():Flow<PagingData<Article>> = Pager(
-        config = PagingConfig(20)
-    ){
+    fun getAllArticles(): Flow<PagingData<Article>> = Pager(
+        config = PagingConfig(10)
+    ) {
         NewsHeadlinePagingSource(RetrofitInstance.api)
     }.flow
 }

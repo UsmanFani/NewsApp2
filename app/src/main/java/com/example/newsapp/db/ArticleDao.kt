@@ -1,6 +1,7 @@
 package com.example.newsapp.db
 
 import androidx.lifecycle.LiveData
+import androidx.paging.PagingSource
 import androidx.room.*
 import com.example.newsapp.model.Article
 

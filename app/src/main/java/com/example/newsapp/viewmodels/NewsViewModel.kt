@@ -1,10 +1,7 @@
 package com.example.newsapp.viewmodels
 
 import android.util.Log
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asFlow
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
@@ -29,6 +26,7 @@ import java.sql.SQLException
 
 class NewsViewModel(private val newsRepository: NewsRepository) : ViewModel() {
 
+    private var currentSavedArticles:LiveData<List<Article>>? = null
     private var currentAllArticles: Flow<PagingData<Article>>? = null
     private var currentSearchArticles: Flow<PagingData<Article>>? = null
     private var currentSearchChar: String? = null
@@ -109,7 +107,13 @@ class NewsViewModel(private val newsRepository: NewsRepository) : ViewModel() {
         }
     }
 
-    fun getSavedArticles() = newsRepository.getSavedArticles()
+    fun getSavedArticles(): LiveData<List<Article>> {
+        val lastSavedArticles = currentSavedArticles
+        if(lastSavedArticles != null) return lastSavedArticles
+        val newSavedResult = newsRepository.getSavedArticles()
+        currentSavedArticles = newSavedResult
+        return newSavedResult
+    }
 
     fun getAllArticles(): Flow<PagingData<Article>> {
         val lastArticles = currentAllArticles
