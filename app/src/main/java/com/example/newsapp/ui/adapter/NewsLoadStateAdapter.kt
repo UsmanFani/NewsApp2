@@ -1,8 +1,7 @@
-package com.example.newsapp.adapter
+package com.example.newsapp.ui.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.Button
 import androidx.core.view.isVisible
 import androidx.paging.LoadState
 import androidx.paging.LoadStateAdapter
@@ -20,8 +19,8 @@ class NewsLoadStateAdapter(private val retry: () -> Unit): LoadStateAdapter<News
         fun bind(loadState: LoadState){
             binding.apply {
                 progressCircular.isVisible = loadState is LoadState.Loading
-                retryBtn.isVisible = loadState !is LoadState.Loading
-                errorTv.isVisible = loadState !is LoadState.Loading
+                retryBtn.isVisible = loadState is LoadState.Error
+                errorTv.isVisible = loadState is LoadState.Error
                 if(loadState is LoadState.Error){
                     errorTv.text = loadState.error.localizedMessage
                 }

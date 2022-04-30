@@ -1,39 +1,36 @@
 package com.example.newsapp.ui.fragment
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ProgressBar
 import androidx.activity.OnBackPressedCallback
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
-import androidx.paging.LoadStates
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.newsapp.R
-import com.example.newsapp.adapter.NewsLoadStateAdapter
-import com.example.newsapp.adapter.NewsPagingAdapter
 import com.example.newsapp.databinding.FragmentBreakingNewsBinding
-import com.example.newsapp.databinding.LoadStateItemBinding
-import com.example.newsapp.viewmodels.NewsViewModel
-import com.google.android.material.progressindicator.CircularProgressIndicator
+import com.example.newsapp.ui.adapter.NewsLoadStateAdapter
+import com.example.newsapp.ui.adapter.NewsPagingAdapter
+import com.example.newsapp.ui.viewmodels.NewsViewModel
+import com.example.newsapp.util.Constants
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import java.net.UnknownHostException
 
-class BreakingNewsFragment : Fragment() {
+class BreakingNewsFragment() : Fragment() {
     // lateinit var newsAdapter: NewsAdapter
     lateinit var newsAdapter: NewsPagingAdapter
     private var _binding: FragmentBreakingNewsBinding? = null
     private val binding get() = _binding!!
+    private var categori: String = Constants.Category.GENERAL
+
+    constructor(category: String) : this() {
+        categori = category
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -42,14 +39,12 @@ class BreakingNewsFragment : Fragment() {
     ): View {
         _binding = FragmentBreakingNewsBinding.inflate(inflater, container, false)
         return binding.root
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val viewModel: NewsViewModel by activityViewModels()
         setupRecycleView()
-
         binding.onSwipeRefresh.setOnRefreshListener {
             lifecycleScope.launch {
                 newsAdapter.refresh()
@@ -87,31 +82,56 @@ class BreakingNewsFragment : Fragment() {
 //        })
 
         lifecycleScope.launch {
-            viewModel.getAllArticles().collectLatest {
+            viewModel.getAllArticles(categori).collectLatest {
                 newsAdapter.submitData(it)
             }
         }
+
         lifecycleScope.launch {
             newsAdapter.loadStateFlow.collectLatest {
-                when(it.refresh){
-
+                binding.apply {
+                    onSwipeRefresh.isRefreshing = it.source.refresh is LoadState.Loading
+                    errorIv.isVisible = it.source.refresh is LoadState.Error
+                    errorTv.isVisible = it.source.refresh is LoadState.Error
+                    errorBtn.isVisible = it.source.refresh is LoadState.Error
                 }
             }
         }
 
-        activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
-           private var check:Boolean = false
-            override fun handleOnBackPressed() {
-                if(check) activity?.onBackPressed()
-                else binding.headlineRv.smoothScrollToPosition(0)
-                check = true
-                lifecycleScope.launch {
-                    delay(500)
-                    check = false
-                }
-            }
+        binding.errorBtn.setOnClickListener {
+            newsAdapter.refresh()
+        }
 
-        })
+        activity?.onBackPressedDispatcher?.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                private var check: Boolean = false
+                override fun handleOnBackPressed() {
+                    if (check) activity?.onBackPressed()
+                    else binding.headlineRv.smoothScrollToPosition(0)
+                    check = true
+                    lifecycleScope.launch {
+                        delay(500)
+                        check = false
+                    }
+                }
+
+            })
+
+//        binding.headlineRv.addOnScrollListener(object : RecyclerView.OnScrollListener(){
+//            var state:Int? = null
+//            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+//                super.onScrollStateChanged(recyclerView, newState)
+//                state = newState
+//            }
+//
+//            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+//                super.onScrolled(recyclerView, dx, dy)
+//                if(dy>0){
+//                    (requireActivity() as AppCompatActivity).supportActionBar?.hide()
+//                }else if(dy<0) (requireActivity() as AppCompatActivity).supportActionBar?.show()
+//            }
+//        })
     }
 
 

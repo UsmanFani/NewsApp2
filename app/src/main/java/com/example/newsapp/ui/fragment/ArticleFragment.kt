@@ -2,23 +2,17 @@ package com.example.newsapp.ui.fragment
 
 import android.os.Bundle
 import android.util.Log
-import android.view.KeyEvent
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.get
 import androidx.fragment.app.activityViewModels
-import androidx.navigation.NavArgs
 import androidx.navigation.fragment.navArgs
-import com.example.newsapp.R
 import com.example.newsapp.databinding.FragmentArticleBinding
-import com.example.newsapp.viewmodels.NewsViewModel
-import com.google.android.material.snackbar.Snackbar
+import com.example.newsapp.ui.viewmodels.NewsViewModel
 
 class ArticleFragment : Fragment() {
     private var _binding: FragmentArticleBinding? = null

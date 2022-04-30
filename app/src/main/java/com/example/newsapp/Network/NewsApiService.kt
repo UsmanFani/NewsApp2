@@ -20,6 +20,17 @@ interface NewsApiService {
         apiKey: String = BuildConfig.API_KEY
     ): NewsResponse //returning Response of type NewsResponse Data Class. Response<T(Generic Type)>
 
+    @GET("/v2/top-headlines")
+    suspend fun getHeadlinesByCategory(
+        @Query("country")
+        countryCode: String = "in",
+        @Query("category")
+        headlineCategory : String = "technology",
+        @Query("page")
+        pageNumber: Int = 1,
+        @Query("apiKey")
+        apiKey: String = BuildConfig.API_KEY
+    ):NewsResponse
 
     @GET("/v2/everything")
     suspend fun getSearchNews(
@@ -30,4 +41,6 @@ interface NewsApiService {
         @Query("apiKey")
         apiKey: String = BuildConfig.API_KEY
     ): NewsResponse
+
+
 }

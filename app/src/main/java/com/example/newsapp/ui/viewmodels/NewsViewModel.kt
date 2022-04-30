@@ -1,23 +1,14 @@
-package com.example.newsapp.viewmodels
+package com.example.newsapp.ui.viewmodels
 
 import android.util.Log
 import androidx.lifecycle.*
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.example.newsapp.Network.RetrofitInstance
-import com.example.newsapp.Repository.NewsHeadlinePagingSource
 import com.example.newsapp.Repository.NewsRepository
-import com.example.newsapp.Repository.NewsSearchPagingSource
-import com.example.newsapp.db.ArticleDatabase
 import com.example.newsapp.model.Article
 import com.example.newsapp.model.NewsResponse
 import com.example.newsapp.util.Resource
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import retrofit2.Response
@@ -115,10 +106,10 @@ class NewsViewModel(private val newsRepository: NewsRepository) : ViewModel() {
         return newSavedResult
     }
 
-    fun getAllArticles(): Flow<PagingData<Article>> {
+    fun getAllArticles(category: String): Flow<PagingData<Article>> {
         val lastArticles = currentAllArticles
-        if (lastArticles != null) return lastArticles
-        val newResult = newsRepository.getAllArticles()
+  //      if (lastArticles != null) return lastArticles
+        val newResult = newsRepository.getAllArticles(category)
             .cachedIn(viewModelScope)
         currentAllArticles = newResult
         return newResult

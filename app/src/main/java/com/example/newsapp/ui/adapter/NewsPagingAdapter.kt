@@ -1,10 +1,9 @@
-package com.example.newsapp.adapter
+package com.example.newsapp.ui.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.newsapp.R
@@ -25,6 +24,7 @@ class NewsPagingAdapter : PagingDataAdapter<Article, NewsPagingAdapter.ArticleVi
                     titleTv.text=article.title
                     sourceTv.text=article.source?.name
                     publishedAtTv.text=article.publishedAt
+                    descTv?.text = article.description
                 }
             }
     }

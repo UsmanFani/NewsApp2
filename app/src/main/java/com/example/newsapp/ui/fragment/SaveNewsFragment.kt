@@ -1,26 +1,20 @@
 package com.example.newsapp.ui.fragment
 
 import android.os.Bundle
-import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.newsapp.adapter.NewsAdapter
+import com.example.newsapp.R
+import com.example.newsapp.ui.adapter.NewsAdapter
 import com.example.newsapp.databinding.FragmentSavedNewsBinding
-import com.example.newsapp.model.Article
-import com.example.newsapp.viewmodels.NewsViewModel
+import com.example.newsapp.ui.viewmodels.NewsViewModel
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 
 class SaveNewsFragment:Fragment() {
     var _binding: FragmentSavedNewsBinding? =null

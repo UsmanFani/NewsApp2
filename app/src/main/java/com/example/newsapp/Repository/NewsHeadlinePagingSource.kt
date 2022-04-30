@@ -8,12 +8,12 @@ import retrofit2.HttpException
 import java.io.IOException
 import java.net.UnknownHostException
 
-class NewsHeadlinePagingSource (private val newsApiService: NewsApiService): PagingSource<Int, Article>() {
+class NewsHeadlinePagingSource (private val newsApiService: NewsApiService, val headlineCategory: String): PagingSource<Int, Article>() {
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Article>{
         return try {
             val currentPage=params.key ?: 1
-            val response=newsApiService.getHeadlines(pageNumber = currentPage)
+            val response=newsApiService.getHeadlinesByCategory(pageNumber = currentPage, headlineCategory = headlineCategory)
             val items=response.articles
             val nextKey = if (items.isEmpty()){
                 null

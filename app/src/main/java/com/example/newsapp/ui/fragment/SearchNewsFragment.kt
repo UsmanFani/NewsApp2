@@ -3,31 +3,27 @@ package com.example.newsapp.ui.fragment
 import android.app.Activity
 import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.util.Log
+import android.view.*
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.example.newsapp.databinding.FragmentSearchNewsBinding
 import androidx.navigation.fragment.findNavController
-import androidx.paging.LoadState
-import androidx.paging.PagingData
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.newsapp.adapter.NewsLoadStateAdapter
-import com.example.newsapp.adapter.NewsPagingAdapter
-import com.example.newsapp.model.Article
-import com.example.newsapp.viewmodels.NewsViewModel
+import com.example.newsapp.R
+import com.example.newsapp.ui.adapter.NewsLoadStateAdapter
+import com.example.newsapp.ui.adapter.NewsPagingAdapter
+import com.example.newsapp.ui.viewmodels.NewsViewModel
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class SearchNewsFragment : Fragment() {
-    // lateinit var newsAdapter: NewsAdapter
     lateinit var newsAdapter: NewsPagingAdapter
     var _binding: FragmentSearchNewsBinding? = null
     val binding get() = _binding!!
@@ -44,6 +40,8 @@ class SearchNewsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setupRecycler()
+        setHasOptionsMenu(true)
+        //  (requireActivity() as AppCompatActivity).supportActionBar?.hide()
         super.onViewCreated(view, savedInstanceState)
 
         if (viewModel.flag) {
@@ -54,55 +52,7 @@ class SearchNewsFragment : Fragment() {
             }
         }
 
-        binding.searchEt.setOnEditorActionListener { v, actionId, event ->
-            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                lifecycleScope.launch {
-                    viewModel.getSearchArticles(v.text.toString()).collect {
-                        newsAdapter.submitData(it)
-                    }
-                }
-                val view = binding.root.rootView
-                hideKeyboardFrom(requireContext(),view)
-                return@setOnEditorActionListener true
-            }
-            return@setOnEditorActionListener false
 
-        }
-
-        //to do background job
-        //runs inside coroutines scope
-        /*    var job: Job? = null
-            binding.searchEt.addTextChangedListener { editable ->
-                job?.cancel()
-                job = MainScope().launch {
-                    delay(1000L)
-                    if (editable.toString().isNotEmpty()) {
-                       // viewModel.getSearchNews(editable.toString())
-                        viewModel.getSearchArticles(editable.toString()).collectLatest {
-                            newsAdapter.submitData(it)
-                        }
-
-                    }
-                }
-            }*/
-
-        //observing the data change
-//        viewModel.searchNewsLiveData.observe(viewLifecycleOwner, Observer { resource ->
-//            when (resource) {
-//                is Resource.Success -> {
-//                    resource.data?.let { newsResponse ->
-//                        newsAdapter.differ.submitList(newsResponse.articles)
-//                    }
-//
-//                }
-//                is Resource.Error -> {
-//                    resource.message?.let {
-//                        Log.e("searchError", it)
-//                    }
-//                }
-//            }
-//
-//        })
 
         newsAdapter.setOnItemClickListner {
             val action = SearchNewsFragmentDirections.actionSearchNewsFragmentToArticleFragment(it)
@@ -115,33 +65,53 @@ class SearchNewsFragment : Fragment() {
     private fun setupRecycler() {
         newsAdapter = NewsPagingAdapter()
         val newAdapter = newsAdapter.withLoadStateHeaderAndFooter(
-            header = NewsLoadStateAdapter{newsAdapter.retry()},
-            footer = NewsLoadStateAdapter{newsAdapter.retry()}
+            header = NewsLoadStateAdapter { newsAdapter.retry() },
+            footer = NewsLoadStateAdapter { newsAdapter.retry() }
         )
         binding.searchRv.adapter = newAdapter
         binding.searchRv.layoutManager = LinearLayoutManager(activity)
-        val deccoration = DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL)
-        binding.searchRv.addItemDecoration(deccoration)
+        val decoration = DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL)
+        binding.searchRv.addItemDecoration(decoration)
     }
 
-    override fun onResume() {
-        super.onResume()
-        (requireActivity() as AppCompatActivity).supportActionBar?.hide()
-    }
-
-    override fun onStop() {
-        super.onStop()
-        (requireActivity() as AppCompatActivity).supportActionBar?.show()
-    }
 
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
     }
 
-    fun hideKeyboardFrom(context: Context,view: View){
+    fun hideKeyboardFrom(context: Context, view: View) {
         val imm = context.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(view.windowToken,0)
+        imm.hideSoftInputFromWindow(view.windowToken, 0)
         view.clearFocus()
+    }
+
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        menu.findItem(R.id.searchNewsFragment).isVisible = false
+        inflater.inflate(R.menu.top_app_bar_search,menu)
+        val searchItem = menu.findItem(R.id.searchNews)
+        searchItem.expandActionView()
+        val searchView = searchItem.actionView as SearchView
+
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                Log.d("Query", "onQueryTextSubmit:$query ")
+                lifecycleScope.launch {
+                    if (query != null) {
+                        viewModel.getSearchArticles(query).collect {
+                            newsAdapter.submitData(it)
+                        }
+                    }
+                }
+                searchView.clearFocus()
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                return true
+            }
+
+        })
     }
 }
