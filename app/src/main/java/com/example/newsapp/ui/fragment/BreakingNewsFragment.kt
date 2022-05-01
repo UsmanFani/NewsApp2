@@ -26,10 +26,16 @@ class BreakingNewsFragment() : Fragment() {
     lateinit var newsAdapter: NewsPagingAdapter
     private var _binding: FragmentBreakingNewsBinding? = null
     private val binding get() = _binding!!
-    private var categori: String = Constants.Category.GENERAL
 
-    constructor(category: String) : this() {
-        categori = category
+
+    companion object {
+        fun newInstance(category: String): BreakingNewsFragment {
+            return BreakingNewsFragment().apply {
+                arguments = Bundle().apply {
+                    putString("category", category)
+                }
+            }
+        }
     }
 
     override fun onCreateView(
@@ -43,6 +49,7 @@ class BreakingNewsFragment() : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        savedInstanceState?.getString("category")
         val viewModel: NewsViewModel by activityViewModels()
         setupRecycleView()
         binding.onSwipeRefresh.setOnRefreshListener {
@@ -57,7 +64,7 @@ class BreakingNewsFragment() : Fragment() {
         newsAdapter.setOnItemClickListner {
             // navigating to Article Fragment by passing Article data class
             val action =
-                BreakingNewsFragmentDirections.actionBreakingNewsFragmentToArticleFragment2(it)
+                TabNewsFragmentDirections.actionTabNewsFragmentToArticleFragment(it)
 //            val bundle = Bundle().apply {
 //               putParcelable("article", it)
 //            }
@@ -82,8 +89,11 @@ class BreakingNewsFragment() : Fragment() {
 //        })
 
         lifecycleScope.launch {
-            viewModel.getAllArticles(categori).collectLatest {
-                newsAdapter.submitData(it)
+            val categori = arguments?.getString("category")
+            categori?.let {
+                viewModel.getAllArticles(it).collectLatest {
+                    newsAdapter.submitData(it)
+                }
             }
         }
 
@@ -118,20 +128,6 @@ class BreakingNewsFragment() : Fragment() {
 
             })
 
-//        binding.headlineRv.addOnScrollListener(object : RecyclerView.OnScrollListener(){
-//            var state:Int? = null
-//            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-//                super.onScrollStateChanged(recyclerView, newState)
-//                state = newState
-//            }
-//
-//            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-//                super.onScrolled(recyclerView, dx, dy)
-//                if(dy>0){
-//                    (requireActivity() as AppCompatActivity).supportActionBar?.hide()
-//                }else if(dy<0) (requireActivity() as AppCompatActivity).supportActionBar?.show()
-//            }
-//        })
     }
 
 

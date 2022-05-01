@@ -4,13 +4,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import com.example.newsapp.R
 import com.example.newsapp.databinding.FragmentTabNewsBinding
 import com.example.newsapp.ui.adapter.NewsFragmentCollectionAdapter
 import com.example.newsapp.util.Constants
 import com.google.android.material.tabs.TabLayoutMediator
-import java.util.*
 
 class TabNewsFragment : Fragment(R.layout.fragment_tab_news) {
     private lateinit var newsFragmentCollectionAdapter: NewsFragmentCollectionAdapter
@@ -28,13 +28,13 @@ class TabNewsFragment : Fragment(R.layout.fragment_tab_news) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val breakingNewsFragList = listOf(
-            BreakingNewsFragment(Constants.Category.GENERAL),
-            BreakingNewsFragment(Constants.Category.TECHNOLOGY),
-            BreakingNewsFragment(Constants.Category.SCIENCE),
-            BreakingNewsFragment(Constants.Category.HEALTH),
-            BreakingNewsFragment(Constants.Category.ENTERTAINMENT),
-            BreakingNewsFragment(Constants.Category.BUSINESS),
-            BreakingNewsFragment(Constants.Category.SPORTS)
+            BreakingNewsFragment.newInstance(Constants.Category.GENERAL),
+            BreakingNewsFragment.newInstance(Constants.Category.TECHNOLOGY),
+            BreakingNewsFragment.newInstance(Constants.Category.SCIENCE),
+            BreakingNewsFragment.newInstance(Constants.Category.HEALTH),
+            BreakingNewsFragment.newInstance(Constants.Category.ENTERTAINMENT),
+            BreakingNewsFragment.newInstance(Constants.Category.BUSINESS),
+            BreakingNewsFragment.newInstance(Constants.Category.SPORTS)
         )
         newsFragmentCollectionAdapter =
             NewsFragmentCollectionAdapter(childFragmentManager, lifecycle, breakingNewsFragList)
@@ -53,5 +53,6 @@ class TabNewsFragment : Fragment(R.layout.fragment_tab_news) {
                 else -> Constants.Category.GENERAL
             }
         }.attach()
+
     }
 }

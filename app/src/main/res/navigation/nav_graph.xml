@@ -51,7 +51,7 @@
         app:exitAnim="@anim/from_on_to_left"
         app:popEnterAnim="@anim/from_left_to_on"
         app:popExitAnim="@anim/from_on_to_right"
-        tools:layout="@layout/fragment_article" >
+        tools:layout="@layout/fragment_article">
         <argument
             android:name="articleArgs"
             app:argType="com.example.newsapp.model.Article" />
@@ -59,9 +59,13 @@
     <fragment
         android:id="@+id/tabNewsFragment"
         android:name="com.example.newsapp.ui.fragment.TabNewsFragment"
-        android:label="TabNewsFragment" >
+        android:label="TabNewsFragment">
         <action
             android:id="@+id/action_tabNewsFragment_to_articleFragment"
-            app:destination="@id/articleFragment" />
+            app:destination="@id/articleFragment"
+            app:enterAnim="@anim/from_right_to_on"
+            app:exitAnim="@anim/from_on_to_left"
+            app:popEnterAnim="@anim/from_left_to_on"
+            app:popExitAnim="@anim/from_on_to_right" />
     </fragment>
 </navigation>
