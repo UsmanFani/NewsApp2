@@ -4,7 +4,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -12,11 +14,14 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.newsapp.R
 import com.example.newsapp.databinding.FragmentBreakingNewsBinding
 import com.example.newsapp.ui.adapter.NewsLoadStateAdapter
 import com.example.newsapp.ui.adapter.NewsPagingAdapter
 import com.example.newsapp.ui.viewmodels.NewsViewModel
 import com.example.newsapp.util.Constants
+import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -121,13 +126,19 @@ class BreakingNewsFragment() : Fragment() {
                     else binding.headlineRv.smoothScrollToPosition(0)
                     check = true
                     lifecycleScope.launch {
-                        delay(500)
+                        Toast.makeText(requireContext(),"Back Press Again To Exit",Toast.LENGTH_SHORT).show()
+                        delay(1000)
                         check = false
                     }
                 }
 
             })
-
+        val navigation = activity?.findViewById(R.id.bottomNavView) as BottomNavigationView
+        navigation.setOnItemReselectedListener {
+            when (it.itemId) {
+                R.id.tabNewsFragment -> binding.headlineRv.scrollToPosition(0)
+            }
+        }
     }
 
 
@@ -142,7 +153,12 @@ class BreakingNewsFragment() : Fragment() {
             adapter = newAdapter
             layoutManager = LinearLayoutManager(activity)
         }
+    }
 
+    override fun onStop() {
+        super.onStop()
+        val appBarLayout = activity?.findViewById(R.id.appBarLayout) as AppBarLayout
+        appBarLayout.setExpanded(true,true)
     }
 
     override fun onDestroy() {

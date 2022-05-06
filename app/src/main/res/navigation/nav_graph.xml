@@ -59,7 +59,7 @@
     <fragment
         android:id="@+id/tabNewsFragment"
         android:name="com.example.newsapp.ui.fragment.TabNewsFragment"
-        android:label="TabNewsFragment">
+        android:label="Headlines">
         <action
             android:id="@+id/action_tabNewsFragment_to_articleFragment"
             app:destination="@id/articleFragment"

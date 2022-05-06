@@ -20,6 +20,7 @@ import com.example.newsapp.R
 import com.example.newsapp.ui.adapter.NewsLoadStateAdapter
 import com.example.newsapp.ui.adapter.NewsPagingAdapter
 import com.example.newsapp.ui.viewmodels.NewsViewModel
+import com.google.android.material.appbar.AppBarLayout
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
@@ -89,7 +90,7 @@ class SearchNewsFragment : Fragment() {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         menu.findItem(R.id.searchNewsFragment).isVisible = false
-        inflater.inflate(R.menu.top_app_bar_search,menu)
+        inflater.inflate(R.menu.top_app_bar_search, menu)
         val searchItem = menu.findItem(R.id.searchNews)
         searchItem.expandActionView()
         val searchView = searchItem.actionView as SearchView
@@ -114,4 +115,11 @@ class SearchNewsFragment : Fragment() {
 
         })
     }
+
+    override fun onStop() {
+        super.onStop()
+        val appBarLayout = activity?.findViewById(R.id.appBarLayout) as AppBarLayout
+        appBarLayout.setExpanded(true, true)
+    }
+
 }

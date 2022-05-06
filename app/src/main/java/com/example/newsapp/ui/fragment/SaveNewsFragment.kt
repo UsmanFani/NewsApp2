@@ -14,11 +14,13 @@ import com.example.newsapp.R
 import com.example.newsapp.ui.adapter.NewsAdapter
 import com.example.newsapp.databinding.FragmentSavedNewsBinding
 import com.example.newsapp.ui.viewmodels.NewsViewModel
+import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
 
-class SaveNewsFragment:Fragment() {
-    var _binding: FragmentSavedNewsBinding? =null
-    val binding get() =_binding!!
+class SaveNewsFragment : Fragment() {
+    var _binding: FragmentSavedNewsBinding? = null
+    val binding get() = _binding!!
     lateinit var newsAdapter: NewsAdapter
 
     override fun onCreateView(
@@ -26,15 +28,16 @@ class SaveNewsFragment:Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-       _binding=FragmentSavedNewsBinding.inflate(inflater,container,false)
+        _binding = FragmentSavedNewsBinding.inflate(inflater, container, false)
         return binding.root
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val viewModel:NewsViewModel by activityViewModels()
+        val viewModel: NewsViewModel by activityViewModels()
         setupRecyclerView()
 
-        viewModel.getSavedArticles().observe(viewLifecycleOwner, Observer {article->
+        viewModel.getSavedArticles().observe(viewLifecycleOwner, Observer { article ->
             newsAdapter.differ.submitList(article)
         })
 
@@ -45,10 +48,10 @@ class SaveNewsFragment:Fragment() {
 //        }
 
         //callback for swipe to delete article and passing it to ItemTouchHelper
-        val itemTouchHelper=object :ItemTouchHelper.SimpleCallback(
+        val itemTouchHelper = object : ItemTouchHelper.SimpleCallback(
             ItemTouchHelper.UP or ItemTouchHelper.DOWN,
             ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
-        ){
+        ) {
             override fun onMove(
                 recyclerView: RecyclerView,
                 viewHolder: RecyclerView.ViewHolder,
@@ -59,14 +62,14 @@ class SaveNewsFragment:Fragment() {
 
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                val position=viewHolder.absoluteAdapterPosition
-                val article=newsAdapter.differ.currentList[position]
+                val position = viewHolder.absoluteAdapterPosition
+                val article = newsAdapter.differ.currentList[position]
                 viewModel.deleteSavedNews(article)
-                Snackbar.make(binding.root,"Article Deleted",Snackbar.LENGTH_SHORT)
-                    .setAction("Undo"){
+                Snackbar.make(binding.root, "Article Deleted", Snackbar.LENGTH_SHORT)
+                    .setAction("Undo") {
                         viewModel.saveNews(article)
                         binding.saveRv.scrollToPosition(position)
-                }.show()
+                    }.show()
             }
 
         }
@@ -74,19 +77,30 @@ class SaveNewsFragment:Fragment() {
         ItemTouchHelper(itemTouchHelper).attachToRecyclerView(binding.saveRv)
 
         newsAdapter.setOnItemClickListner {
-            val action=SaveNewsFragmentDirections.actionSaveNewsFragmentToArticleFragment(it)
+            val action = SaveNewsFragmentDirections.actionSaveNewsFragmentToArticleFragment(it)
             findNavController().navigate(action)
+        }
+        val navigation = activity?.findViewById(R.id.bottomNavView) as BottomNavigationView
+        navigation.setOnItemReselectedListener {
+            when (it.itemId) {
+                R.id.saveNewsFragment -> binding.saveRv.smoothScrollToPosition(0)
+            }
         }
     }
 
-    fun setupRecyclerView(){
-        newsAdapter= NewsAdapter()
+    fun setupRecyclerView() {
+        newsAdapter = NewsAdapter()
         binding.apply {
             saveRv.adapter = newsAdapter
             saveRv.layoutManager = LinearLayoutManager(activity)
         }
     }
 
+    override fun onStop() {
+        super.onStop()
+        val appBarLayout = activity?.findViewById(R.id.appBarLayout) as AppBarLayout
+        appBarLayout.setExpanded(true,true)
+    }
     override fun onDestroy() {
         super.onDestroy()
         _binding = null

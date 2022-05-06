@@ -4,12 +4,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.newsapp.R
 import com.example.newsapp.databinding.FragmentTabNewsBinding
 import com.example.newsapp.ui.adapter.NewsFragmentCollectionAdapter
 import com.example.newsapp.util.Constants
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.tabs.TabLayoutMediator
 
 class TabNewsFragment : Fragment(R.layout.fragment_tab_news) {
@@ -53,6 +55,7 @@ class TabNewsFragment : Fragment(R.layout.fragment_tab_news) {
                 else -> Constants.Category.GENERAL
             }
         }.attach()
+
 
     }
 }

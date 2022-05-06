@@ -17,12 +17,13 @@ import java.sql.SQLException
 
 class NewsViewModel(private val newsRepository: NewsRepository) : ViewModel() {
 
-    private var currentSavedArticles:LiveData<List<Article>>? = null
+    private var currentSavedArticles: LiveData<List<Article>>? = null
     private var currentAllArticles: Flow<PagingData<Article>>? = null
     private var currentSearchArticles: Flow<PagingData<Article>>? = null
     private var currentSearchChar: String? = null
+    private var cate: String? = null
     val currentChar get() = currentSearchChar
-    private var _flag:Boolean = false
+    private var _flag: Boolean = false
     val flag get() = _flag
 
 
@@ -100,7 +101,7 @@ class NewsViewModel(private val newsRepository: NewsRepository) : ViewModel() {
 
     fun getSavedArticles(): LiveData<List<Article>> {
         val lastSavedArticles = currentSavedArticles
-        if(lastSavedArticles != null) return lastSavedArticles
+        if (lastSavedArticles != null) return lastSavedArticles
         val newSavedResult = newsRepository.getSavedArticles()
         currentSavedArticles = newSavedResult
         return newSavedResult
@@ -108,9 +109,10 @@ class NewsViewModel(private val newsRepository: NewsRepository) : ViewModel() {
 
     fun getAllArticles(category: String): Flow<PagingData<Article>> {
         val lastArticles = currentAllArticles
-  //      if (lastArticles != null) return lastArticles
+        if (lastArticles != null && cate == category) return lastArticles
         val newResult = newsRepository.getAllArticles(category)
             .cachedIn(viewModelScope)
+        cate = category
         currentAllArticles = newResult
         return newResult
     }

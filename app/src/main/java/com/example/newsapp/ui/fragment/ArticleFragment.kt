@@ -1,6 +1,8 @@
 package com.example.newsapp.ui.fragment
 
+import android.opengl.Visibility
 import android.os.Bundle
+import android.text.Layout
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -9,10 +11,15 @@ import android.view.ViewGroup
 import android.webkit.WebViewClient
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.navArgs
+import com.example.newsapp.R
 import com.example.newsapp.databinding.FragmentArticleBinding
 import com.example.newsapp.ui.viewmodels.NewsViewModel
+import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class ArticleFragment : Fragment() {
     private var _binding: FragmentArticleBinding? = null
@@ -42,17 +49,26 @@ class ArticleFragment : Fragment() {
             viewModel.saveNews(article)
             Toast.makeText(activity,"Article Saved",Toast.LENGTH_SHORT).show()
         }
+        val frag = activity?.findViewById(R.id.fragConstraint) as ConstraintLayout
     }
 
 
     override fun onResume() {
         super.onResume()
-        (requireActivity() as AppCompatActivity).supportActionBar?.hide()
+        val navigation = activity?.findViewById(R.id.bottomNavView) as BottomNavigationView
+        navigation.isVisible = false
+        val appBarLayout = activity?.findViewById(R.id.appBarLayout) as AppBarLayout
+        appBarLayout.setExpanded(false,true)
+       // (requireActivity() as AppCompatActivity).supportActionBar?.hide()
     }
 
     override fun onStop() {
         super.onStop()
-        (requireActivity() as AppCompatActivity).supportActionBar?.show()
+        val navigation = activity?.findViewById(R.id.bottomNavView) as BottomNavigationView
+        navigation.isVisible = true
+        val appBarLayout = activity?.findViewById(R.id.appBarLayout) as AppBarLayout
+        appBarLayout.setExpanded(true)
+       // (requireActivity() as AppCompatActivity).supportActionBar?.show()
     }
 
     override fun onDestroy() {
