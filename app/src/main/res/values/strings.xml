@@ -5,4 +5,10 @@
     <string name="breaking_news">Breaking News</string>
     <string name="saved">Saved</string>
     <string name="search">Search</string>
+    <string name="sources">Sources</string>
+    <string name="title">Title</string>
+    <string name="published_time">Published time</string>
+    <string name="source">Sources</string>
+    <string name="titl">Title</string>
+    <string name="description">Description</string>
 </resources>
