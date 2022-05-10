@@ -1,6 +1,7 @@
 package com.example.newsapp.ui.adapter
 
 import android.graphics.Typeface
+import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
@@ -10,6 +11,9 @@ import com.bumptech.glide.Glide
 import com.example.newsapp.R
 import com.example.newsapp.databinding.ArticlePreviewBinding
 import com.example.newsapp.model.Article
+import com.example.newsapp.util.Constants
+import java.text.SimpleDateFormat
+import java.util.*
 
 class NewsAdapter : RecyclerView.Adapter<NewsAdapter.ArticleViewHolder>() {
 
@@ -44,8 +48,8 @@ class NewsAdapter : RecyclerView.Adapter<NewsAdapter.ArticleViewHolder>() {
             holder.tvDescription?.text = article.description
             holder.tvTitle.text = article.title
             holder.tvSource.text = article.source?.name
-            holder.tvSource.typeface= Typeface.SERIF
-            holder.tvPublishedAt.text = article.publishedAt
+            holder.tvSource.typeface = Typeface.SERIF
+            holder.tvPublishedAt.text = Constants().convertTime(article.publishedAt)
             setOnClickListener {
                 onItemClickListner?.let {
                     it(article)

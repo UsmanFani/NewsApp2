@@ -19,9 +19,9 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
 
 class SaveNewsFragment : Fragment() {
-    var _binding: FragmentSavedNewsBinding? = null
-    val binding get() = _binding!!
-    lateinit var newsAdapter: NewsAdapter
+    private var _binding: FragmentSavedNewsBinding? = null
+    private val binding get() = _binding!!
+    private lateinit var newsAdapter: NewsAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,

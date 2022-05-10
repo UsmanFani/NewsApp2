@@ -28,7 +28,7 @@ import kotlinx.coroutines.launch
 
 class BreakingNewsFragment() : Fragment() {
     // lateinit var newsAdapter: NewsAdapter
-    lateinit var newsAdapter: NewsPagingAdapter
+    private lateinit var newsAdapter: NewsPagingAdapter
     private var _binding: FragmentBreakingNewsBinding? = null
     private val binding get() = _binding!!
 

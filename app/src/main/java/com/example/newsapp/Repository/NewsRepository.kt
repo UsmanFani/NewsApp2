@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.Flow
 //repository class is used to get the data from Local/Remote
 class NewsRepository(val database: ArticleDatabase) {
 
-
     suspend fun getHeadlineNews(countryCode: String, pageNo: Int) =
         RetrofitInstance.api.getHeadlines(countryCode, pageNo)
 
@@ -25,18 +24,17 @@ class NewsRepository(val database: ArticleDatabase) {
     fun getSavedArticles() =
         database.getArticleDao().getAllArticles()
 
-
     suspend fun delete(article: Article) =
         database.getArticleDao().deleteArticle(article)
 
     fun getSearchArticles(query: String): Flow<PagingData<Article>> = Pager(
-        config = PagingConfig(10)
+        config = PagingConfig(10, maxSize = 50)
     ) {
         NewsSearchPagingSource(RetrofitInstance.api, query)
     }.flow
 
     fun getAllArticles(category:String): Flow<PagingData<Article>> = Pager(
-        config = PagingConfig(10)
+        config = PagingConfig(10, maxSize = 50)
     ) {
         NewsHeadlinePagingSource(RetrofitInstance.api,category)
     }.flow
