@@ -94,6 +94,7 @@ class SearchNewsFragment : Fragment() {
         val searchItem = menu.findItem(R.id.searchNews)
         searchItem.expandActionView()
         val searchView = searchItem.actionView as SearchView
+        searchView.queryHint = "Search for News"
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
