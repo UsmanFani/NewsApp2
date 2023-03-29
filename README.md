@@ -5,6 +5,10 @@ This is an Android news application built using the MVVM architecture pattern an
 ### Screenshots
 Please find below some screenshots of the app:
 
+![ezgif com-resize (2)](https://user-images.githubusercontent.com/38327072/228473278-f982429b-a48d-4eef-b04c-b21627e7f3d5.gif)
+![ezgif com-resize](https://user-images.githubusercontent.com/38327072/228472277-e5a69ebd-f1d5-4269-9ef8-a30f93bfa552.gif)
+![ezgif com-resize (3)](https://user-images.githubusercontent.com/38327072/228474087-8f704a48-6509-4356-b522-877bd0b4256d.gif)
+
 
 ### Features
 - Browse news articles from various categories, such as business, entertainment, general, health, science, sports, and technology.
